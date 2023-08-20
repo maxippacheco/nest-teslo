@@ -1,13 +1,17 @@
 import { Controller, Get, Post, Body, UseGuards, Req, SetMetadata } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
 import { AuthService } from './auth.service';
+import { Auth, GetUser, RawHeaders } from './decorators';
+import { RoleProtected } from './decorators/role-protected.decorator';
+
 import { CreateUserDto, LoginUserDto } from './dto';
 import { User } from './entities/user.entity';
-import { Auth, GetUser, RawHeaders } from './decorators';
 import { UserRoleGuard } from './guards/user-role.guard';
-import { RoleProtected } from './decorators/role-protected.decorator';
 import { ValidRoles } from './interfaces';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -67,6 +71,7 @@ export class AuthController {
 
   @Get('private3')
   @Auth(ValidRoles.user)
+  @ApiBearerAuth('JWT-auth')
   privateRoute3(
     @GetUser() user: User
   ){
